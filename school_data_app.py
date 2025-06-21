@@ -42,9 +42,21 @@ st.subheader("📋 Filtered Results")
 st.dataframe(filtered_df, use_container_width=True)
 
 # --- Export
+from io import BytesIO
+
+# --- Export Button
+def convert_df_to_excel(df):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+    output.seek(0)
+    return output
+
+excel_data = convert_df_to_excel(filtered_df)
+
 st.download_button(
     label="📥 Export Filtered Data to Excel",
-    data=filtered_df.to_excel(index=False, engine='openpyxl'),
+    data=excel_data,
     file_name="filtered_school_data.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 )
